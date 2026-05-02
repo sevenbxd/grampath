@@ -1,0 +1,392 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #1e293b;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-hover: #f1f5f9;
+  
+  --primary: #22c55e;
+  --primary-hover: #16a34a;
+  --primary-shadow: #15803d;
+  
+  --secondary: #f97316;
+  --secondary-hover: #ea580c;
+  --secondary-shadow: #c2410c;
+  
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-shadow: #1d4ed8;
+  
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  --border: #e2e8f0;
+  --ring: #22c55e;
+  
+  --radius: 1rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+  border-radius: inherit;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+.card-glow {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+}
+
+.card-glow:hover {
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.25);
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.step-path {
+  position: relative;
+}
+
+.step-path::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #22c55e, #3b82f6);
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .step-path::before {
+    display: none;
+  }
+}
+
+/* Animated Frames */
+@keyframes rainbow {
+  0% { border-color: #ef4444; box-shadow: 0 0 15px #ef4444; }
+  25% { border-color: #f97316; box-shadow: 0 0 15px #f97316; }
+  50% { border-color: #eab308; box-shadow: 0 0 15px #eab308; }
+  75% { border-color: #22c55e; box-shadow: 0 0 15px #22c55e; }
+  100% { border-color: #3b82f6; box-shadow: 0 0 15px #3b82f6; }
+}
+
+@keyframes fire-glow {
+  0%, 100% { box-shadow: 0 0 15px #f97316, 0 0 30px #f97316; border-color: #ea580c; }
+  50% { box-shadow: 0 0 25px #f97316, 0 0 50px #f97316; border-color: #fb923c; }
+}
+
+@keyframes ice-glow {
+  0%, 100% { box-shadow: 0 0 10px #67e8f9, 0 0 20px #67e8f9; border-color: #22d3ee; }
+  50% { box-shadow: 0 0 20px #67e8f9, 0 0 40px #67e8f9; border-color: #a5f3fc; }
+}
+
+@keyframes gold-shine {
+  0%, 100% { border-color: #eab308; box-shadow: 0 0 15px #eab308; }
+  50% { border-color: #fcd34d; box-shadow: 0 0 25px #fcd34d, 0 0 35px #fbbf24; }
+}
+
+@keyframes diamond-sparkle {
+  0%, 100% { border-color: #a5f3fc; box-shadow: 0 0 15px #a5f3fc, 0 0 30px #67e8f9; }
+  25% { border-color: #e0f2fe; box-shadow: 0 0 20px #e0f2fe; }
+  50% { border-color: #bae6fd; box-shadow: 0 0 25px #bae6fd, 0 0 40px #7dd3fc; }
+  75% { border-color: #7dd3fc; box-shadow: 0 0 20px #7dd3fc; }
+}
+
+@keyframes emerald-glow {
+  0%, 100% { border-color: #059669; box-shadow: 0 0 15px #059669; }
+  50% { border-color: #10b981; box-shadow: 0 0 25px #10b981, 0 0 35px #34d399; }
+}
+
+@keyframes gift-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.frame-gold {
+  animation: gold-shine 2s ease-in-out infinite;
+  position: relative;
+}
+
+.frame-gold::before {
+  content: '👑';
+  position: absolute;
+  font-size: 14px;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: gold-shine 2s ease-in-out infinite;
+}
+
+.frame-diamond {
+  animation: diamond-sparkle 2s ease-in-out infinite;
+  position: relative;
+}
+
+.frame-diamond::before {
+  content: '💎';
+  position: absolute;
+  font-size: 14px;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: diamond-sparkle 2s ease-in-out infinite;
+}
+
+.frame-emerald {
+  animation: emerald-glow 2s ease-in-out infinite;
+  position: relative;
+}
+
+.frame-emerald::before {
+  content: '💚';
+  position: absolute;
+  font-size: 14px;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: emerald-glow 2s ease-in-out infinite;
+}
+
+/* Fix Christmas - cleaner version */
+.frame-christmas {
+  position: relative;
+  background: linear-gradient(to bottom, #166534 0%, #14532d 100%);
+  overflow: hidden;
+}
+
+.frame-christmas::before {
+  content: '🎁';
+  position: absolute;
+  font-size: 14px;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: gift-bounce 1s ease-in-out infinite;
+}
+
+.frame-christmas::after {
+  content: '🎄';
+  position: absolute;
+  font-size: 12px;
+  top: -8px;
+  right: -8px;
+}
+
+@keyframes float-bell {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+@keyframes flicker-candle {
+  0% { opacity: 0.8; transform: scale(1) translateY(0); }
+  100% { opacity: 1; transform: scale(1.1) translateY(-2px); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes snowfall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  100% { transform: translateY(100px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.1); }
+}
+
+.frame-rainbow {
+  animation: rainbow 3s linear infinite;
+  position: relative;
+}
+
+.frame-rainbow::before {
+  content: '✨';
+  position: absolute;
+  font-size: 12px;
+  top: -8px;
+  right: -8px;
+  animation: sparkle 1s ease-in-out infinite;
+}
+
+.frame-fire {
+  animation: fire-glow 1s ease-in-out infinite;
+  position: relative;
+  background: linear-gradient(135deg, #1a0a00 0%, #2d1810 50%, #1a0a00 100%);
+}
+
+.frame-fire::before {
+  content: '🔥';
+  position: absolute;
+  font-size: 14px;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: fire-glow 0.8s ease-in-out infinite;
+}
+
+.frame-ice {
+  animation: ice-glow 2s ease-in-out infinite;
+  position: relative;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #e0f2fe 100%);
+}
+
+.frame-ice::before {
+  content: '❄️';
+  position: absolute;
+  font-size: 12px;
+  top: -8px;
+  right: -8px;
+  animation: float-snow 2s ease-in-out infinite;
+}
+
+.frame-ice::after {
+  content: '❄️';
+  position: absolute;
+  font-size: 10px;
+  bottom: -6px;
+  left: -6px;
+  animation: float-snow 2.5s ease-in-out infinite 0.5s;
+}
+
+.frame-christmas {
+  position: relative;
+  background: linear-gradient(to bottom, #1e3a5f 0%, #0f172a 100%);
+  overflow: hidden;
+}
+
+.frame-christmas::before {
+  content: '🔔';
+  position: absolute;
+  font-size: 14px;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: float-bell 1s ease-in-out infinite;
+}
+
+.frame-christmas::after {
+  content: '❄️';
+  position: absolute;
+  font-size: 12px;
+  top: -8px;
+  right: -8px;
+  animation: float-snow 2s ease-in-out infinite;
+}
+
+.frame-halloween {
+  position: relative;
+  background: linear-gradient(to bottom, #451a03 0%, #1f1f1f 100%);
+}
+
+.frame-halloween::before {
+  content: '🕯️';
+  position: absolute;
+  font-size: 14px;
+  top: -10px;
+  right: -10px;
+  animation: flicker-candle 0.4s ease-in-out infinite alternate;
+}
+
+.frame-halloween::after {
+  content: '🕸️';
+  position: absolute;
+  font-size: 10px;
+  bottom: -6px;
+  left: -6px;
+  opacity: 0.6;
+}
