@@ -17,6 +17,7 @@ interface AuthState {
   user: User | null;
   cloudSynced: boolean;
   lastSyncTime: number | null;
+  guestId: string | null;
   
   setUser: (user: User | null) => void;
   setGuest: (isGuest: boolean) => void;
@@ -24,6 +25,8 @@ interface AuthState {
   logout: () => void;
   setCloudSynced: (synced: boolean) => void;
   setLastSyncTime: (time: number) => void;
+  setGuestId: (id: string) => void;
+  getUserId: () => string;
   initializeAuth: () => void;
 }
 
@@ -36,6 +39,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       cloudSynced: false,
       lastSyncTime: null,
+      guestId: null,
 
       setUser: (user) => set({ 
         isAuthenticated: !!user, 
@@ -64,6 +68,21 @@ export const useAuthStore = create<AuthState>()(
       
       setLastSyncTime: (time) => set({ lastSyncTime: time }),
 
+      setGuestId: (id) => set({ guestId: id }),
+
+      getUserId: () => {
+        const state = get();
+        if (state.isAuthenticated && state.user?.id) {
+          return state.user.id;
+        }
+        if (state.guestId) {
+          return `guest_${state.guestId}`;
+        }
+        const newGuestId = `guest_${Date.now()}`;
+        set({ guestId: newGuestId });
+        return `guest_${newGuestId}`;
+      },
+
       initializeAuth: () => {
         const state = get();
         if (!state.isAuthenticated && !state.isGuest) {
@@ -80,6 +99,7 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         cloudSynced: state.cloudSynced,
         lastSyncTime: state.lastSyncTime,
+        guestId: state.guestId,
       }),
     }
   )
