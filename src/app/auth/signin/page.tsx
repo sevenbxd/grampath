@@ -10,7 +10,7 @@ import { useAuthStore } from '@/store/authStore';
 export default function SignInPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { setGuest, setHasSeenWelcome } = useAuthStore();
+  const { setUser, setGuest, setHasSeenWelcome } = useAuthStore();
 
   if (status === 'loading') {
     return (
@@ -23,7 +23,14 @@ export default function SignInPage() {
     );
   }
 
-  if (session) {
+  if (session?.user) {
+    setUser({
+      id: session.user.id || session.user.email || 'unknown',
+      email: session.user.email || '',
+      name: session.user.name || undefined,
+      image: session.user.image || undefined,
+    });
+    setHasSeenWelcome(true);
     router.push('/app');
     return null;
   }

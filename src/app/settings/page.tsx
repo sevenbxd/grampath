@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { useProgressStore } from '@/store/progressStore';
@@ -41,7 +42,10 @@ export default function SettingsPage() {
     window.dispatchEvent(new Event('dark-mode-changed'));
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (isAuthenticated) {
+      await signOut({ callbackUrl: '/auth/signin' });
+    }
     logout();
     setGuest(true);
     initializeProgress();
@@ -174,6 +178,14 @@ export default function SettingsPage() {
                   className="w-full"
                 >
                   Link Account
+                </Button>
+
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                >
+                  Log Out from Guest
                 </Button>
 
                 {isGuest && (

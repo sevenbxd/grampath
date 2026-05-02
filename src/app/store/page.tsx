@@ -61,7 +61,7 @@ export default function StorePage() {
   const [equippedFrame, setEquippedFrame] = useState('blue');
   const [showPurchaseSuccess, setShowPurchaseSuccess] = useState<string | null>(null);
 
-  useEffect(() => {
+useEffect(() => {
     setMounted(true);
     const savedOwned = localStorage.getItem('store-owned');
     if (savedOwned) {
@@ -69,16 +69,9 @@ export default function StorePage() {
         setOwnedItems(JSON.parse(savedOwned));
       } catch (e) {}
     } else {
-      setOwnedItems([
-        'icon-alien', 'icon-cat', 'icon-cat-king', 'icon-dragon', 'icon-robot', 'icon-ghost',
-        'icon-unicorn', 'icon-skull', 'icon-pumpkin', 'icon-bat', 'icon-spider', 'icon-snake',
-        'icon-bear', 'icon-panda', 'icon-lion', 'icon-monkey',
-        'frame-blue', 'frame-green', 'frame-gold', 'frame-diamond', 'frame-emerald',
-        'frame-purple', 'frame-red', 'frame-pink',
-        'frame-rainbow', 'frame-fire', 'frame-ice', 'frame-christmas', 'frame-halloween'
-      ]);
+      setOwnedItems(['icon-alien', 'frame-blue']);
     }
-const savedIcon = localStorage.getItem('equipped-icon');
+    const savedIcon = localStorage.getItem('equipped-icon');
     if (savedIcon) setEquippedIcon(savedIcon);
     const savedFrame = localStorage.getItem('equipped-frame');
     if (savedFrame) setEquippedFrame(savedFrame);
