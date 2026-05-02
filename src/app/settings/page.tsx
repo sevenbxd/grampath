@@ -21,7 +21,7 @@ export default function SettingsPage() {
     setCloudSynced,
     setLastSyncTime
   } = useAuthStore();
-  const { initializeProgress } = useProgressStore();
+  const { initializeProgress, syncToCloud } = useProgressStore();
   const [mounted, setMounted] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -54,11 +54,14 @@ export default function SettingsPage() {
 
   const handleSyncToCloud = async () => {
     setSyncing(true);
-    setTimeout(() => {
+    try {
+      await syncToCloud();
       setCloudSynced(true);
       setLastSyncTime(Date.now());
-      setSyncing(false);
-    }, 1500);
+    } catch (error) {
+      console.error('Sync failed:', error);
+    }
+    setSyncing(false);
   };
 
   const handleContinueAsGuest = () => {

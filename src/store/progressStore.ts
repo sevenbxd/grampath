@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { walkthroughPath } from '@/data/curriculum/walkthrough';
 import { getStepContent } from '@/data/stepContent';
+import { saveProgressToCloud, loadProgressFromCloud, saveProgressLocally, loadProgressLocally } from '@/lib/storage';
+import { useAuthStore } from './authStore';
 
 interface Achievement {
   id: string;
@@ -42,6 +44,7 @@ interface ProgressState {
   hasSeenOnboarding: boolean;
   
   initializeProgress: () => void;
+  syncToCloud: () => Promise<void>;
   updateStreak: () => void;
   addXP: (amount: number) => void;
   addGems: (amount: number) => void;
@@ -108,8 +111,36 @@ export const useProgressStore = create<ProgressState>()(
       completedChallenges: [],
       hasSeenOnboarding: false,
 
-      initializeProgress: () => {
+      initializeProgress: async () => {
         const state = get();
+        const authState = useAuthStore.getState();
+        const userId = authState.getUserId();
+        
+        if (authState.cloudSynced && (authState.isAuthenticated || authState.isGuest)) {
+          try {
+            const cloudData = await loadProgressFromCloud(userId);
+            if (cloudData) {
+              set({
+                streak: cloudData.streak || 0,
+                lastAccessDate: cloudData.lastAccessDate,
+                totalXP: cloudData.totalXP || 0,
+                gems: cloudData.gems || 0,
+                currentWalkthroughStep: cloudData.currentWalkthroughStep || 1,
+                walkthroughProgress: cloudData.walkthroughProgress || {},
+                skillMastery: cloudData.skillMastery || {},
+                stepProgress: cloudData.stepProgress as Record<number, StepProgress> || {},
+                achievements: cloudData.achievements as Achievement[] || [],
+                dailyStats: cloudData.dailyStats as DailyStats[] || [],
+                completedChallenges: cloudData.completedChallenges || [],
+                hasSeenOnboarding: cloudData.hasSeenOnboarding || false,
+              });
+              return;
+            }
+          } catch (error) {
+            console.error('Failed to load from cloud:', error);
+          }
+        }
+        
         if (state.lastAccessDate === null) {
           set({ 
             lastAccessDate: new Date().toISOString().split('T')[0],
@@ -117,6 +148,32 @@ export const useProgressStore = create<ProgressState>()(
             dailyStats: [],
           });
         }
+      },
+
+      syncToCloud: async () => {
+        const authState = useAuthStore.getState();
+        if (!authState.cloudSynced) return;
+        
+        const userId = authState.getUserId();
+        const state = get();
+        
+        const data = {
+          streak: state.streak,
+          lastAccessDate: state.lastAccessDate,
+          totalXP: state.totalXP,
+          gems: state.gems,
+          currentWalkthroughStep: state.currentWalkthroughStep,
+          walkthroughProgress: state.walkthroughProgress,
+          skillMastery: state.skillMastery,
+          stepProgress: state.stepProgress,
+          achievements: state.achievements,
+          dailyStats: state.dailyStats,
+          completedChallenges: state.completedChallenges,
+          hasSeenOnboarding: state.hasSeenOnboarding,
+        };
+        
+        saveProgressLocally(data);
+        await saveProgressToCloud(userId, data);
       },
 
       updateStreak: () => {
@@ -154,10 +211,12 @@ export const useProgressStore = create<ProgressState>()(
           };
         });
         get().checkAndUnlockAchievements();
+        get().syncToCloud();
       },
 
       addGems: (amount: number) => {
         set((state) => ({ gems: state.gems + amount }));
+        get().syncToCloud();
       },
 
       spendGems: (amount: number) => {
